@@ -1,23 +1,19 @@
 //your JS code here. If required.
 
-// API Key from OpenWeatherMap
-const apiKey = 'YOUR_API_KEY'; // Replace with your API key
-const city = 'London';
-const units = 'metric'; // Use metric units for temperature
+// Get the button and weather data div
+const getWeatherBtn = document.getElementById('getWeatherBtn');
+const weatherDataDiv = document.getElementById('weatherData');
 
-// Construct API URL
-const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${units}&appid=${apiKey}`;
+// API URL with API key
+const apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=London,uk&appid=e467712b257e418838be97cc881a71de';
 
-// Set headers
-const headers = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json'
-};
+// Add event listener to button
+getWeatherBtn.addEventListener('click', getWeather);
 
 // Function to get weather data
 function getWeather() {
     // Use Fetch API to send GET request
-    fetch(apiUrl, { headers })
+    fetch(apiUrl)
         .then(response => {
             // Check if response is OK
             if (response.ok) {
@@ -29,28 +25,25 @@ function getWeather() {
         .then(data => {
             // Extract relevant information
             const weatherDescription = data.weather[0].description;
-            const temperature = data.main.temp;
-            const feelsLike = data.main.feels_like;
+            const temperature = data.main.temp - 273.15; // Convert Kelvin to Celsius
+            const feelsLike = data.main.feels_like - 273.15; // Convert Kelvin to Celsius
             const humidity = data.main.humidity;
             const windSpeed = data.wind.speed;
 
             // Display weather data
             const weatherText = `
-                Current weather in ${city}:
+                Current weather in London:
                 Description: ${weatherDescription}
-                Temperature: ${temperature}°C
-                Feels like: ${feelsLike}°C
+                Temperature: ${temperature.toFixed(2)}°C
+                Feels like: ${feelsLike.toFixed(2)}°C
                 Humidity: ${humidity}%
                 Wind Speed: ${windSpeed} m/s
             `;
             console.log(weatherText);
-            document.getElementById('weatherData').innerText = weatherText;
+            weatherDataDiv.innerText = weatherText;
         })
         .catch(error => {
             console.error(error);
-            document.getElementById('weatherData').innerText = 'Failed to retrieve weather data';
+            weatherDataDiv.innerText = 'Failed to retrieve weather data';
         });
 }
-
-// Call the function
-getWeather();
